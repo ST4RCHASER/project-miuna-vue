@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <NavBar />
+    <NavBar v-if="!$route.fullPath.includes('login')" />
     <el-main style="height: 100%">
       <transition name="slide-fade" mode="out-in" style="height: 100%">
         <Nuxt />
