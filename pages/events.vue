@@ -1,5 +1,7 @@
 <template>
-  <div>:o</div>
+  <div>
+    <EventActivity v-if="activeIndex == 1 || true" />
+  </div>
 </template>
 
 <script>

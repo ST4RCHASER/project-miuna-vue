@@ -61,6 +61,11 @@ export default {
       isLoggingIn: false,
     }
   },
+  created() {
+    if (this.$cookies.get('auth')) {
+      this.$router.push('/dashboard')
+    }
+  },
   methods: {
     bonSubmit(e) {
       console.log(e)
@@ -90,7 +95,7 @@ export default {
             _this.isLoggingIn = false
             this_user = response.data.user
             _this.$router.push('/dashboard')
-            VueCookies.set('user', JSON.stringify(response.data.user))
+            _this.$cookies.set('auth', response.data.content, '1d')
           } else {
             _this.error_msg = response.data.msg
             _this.success_msg = ''

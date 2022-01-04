@@ -1,8 +1,11 @@
 <template>
-  <div>
-    <transition name="slide-fade" mode="out-in">
-      <Nuxt />
-    </transition>
+  <div style="height: 100%">
+    <NavBar />
+    <el-main style="height: 100%">
+      <transition name="slide-fade" mode="out-in" style="height: 100%">
+        <Nuxt />
+      </transition>
+    </el-main>
   </div>
 </template>
 
@@ -21,7 +24,9 @@ html {
 /* ---------------------------------------------------
     CONTENT STYLE
 ----------------------------------------------------- */
-
+#__nuxt,#__layout{
+  height: 100%;
+}
 .slide-fade-enter-active {
   transition: all 0.25s ease;
   overflow: hidden;
@@ -199,8 +204,6 @@ html {
 <script>
 export default {
   name: 'app',
-  mounted() {
-    
-  },
+  mounted() {},
 }
 </script>
