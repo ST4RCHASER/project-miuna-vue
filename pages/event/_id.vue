@@ -71,6 +71,11 @@ export default {
     this.loadEventInfo()
     console.log(this.uuid)
   },
+  created: function () {
+    if (!this.$cookies.get('auth')) {
+      this.$router.push('/login')
+    }
+  },
 }
 </script>
 

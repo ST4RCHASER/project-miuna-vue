@@ -11,6 +11,11 @@ export default {
       activeIndex: 0,
     }
   },
+  created: function () {
+    if (!this.$cookies.get('auth')) {
+      this.$router.push('/login')
+    }
+  },
 }
 </script>
 

@@ -94,8 +94,9 @@ export default {
             _this.success_msg = 'Sign in success!'
             _this.isLoggingIn = false
             this_user = response.data.user
-            _this.$router.push('/dashboard')
             _this.$cookies.set('auth', response.data.content, '1d')
+            _this.$cookies.set('username', _this.form.username, '1d')
+            _this.$router.push('/dashboard')
           } else {
             _this.error_msg = response.data.msg
             _this.success_msg = ''
