@@ -1,7 +1,7 @@
 <template>
   <div style="color: black">
     <h1>History</h1>
-    <a :href="helper.ENDPOINT_URL + '/event/history/export' + uid" target="_blank"
+    <a :href="helper.ENDPOINT_URL + '/event/history/export/' + uid" target="_blank"
       ><el-button type="success" size="small" icon="el-icon-document"
         >Export</el-button
       ></a
