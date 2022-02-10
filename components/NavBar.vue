@@ -9,7 +9,8 @@
     active-text-color="#ffd04b"
   >
     <el-menu-item index="0" @click="activeIndex = 0; push('/dashboard')"><img class="logo" src="/logo_1.png" /></el-menu-item>
-    <el-menu-item index="1" @click="activeIndex = 1; push('/events')"><i class="nav-icon el-icon-s-order"></i>กิจกรรม</el-menu-item>
+    <el-menu-item index="2" @click="activeIndex = 0; push('/dashboard')"><i class="nav-icon el-icon-time"></i>History</el-menu-item>
+    <el-menu-item index="1" @click="activeIndex = 1; push('/events')"><i class="nav-icon el-icon-s-order"></i>Events</el-menu-item>
     <el-submenu style="float: right;" index="2-4">
       <template  slot="title"><i class="nav-icon el-icon-s-custom"></i> {{username}}</template>
       <el-menu-item index="2-4-1" @click="logout()"><i class="nav-icon el-icon-back"></i> ออกจากระบบ</el-menu-item>

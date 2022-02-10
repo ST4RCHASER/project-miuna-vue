@@ -23,6 +23,52 @@
       <b>คำอธิบาย/หมายเหตุ:</b> {{ description }}
     </el-card>
     <!-- {{ uuid }} -->
+    <h3>ผู้เข้าร่วม:</h3> <a :href="helper.ENDPOINT_URL+ '/event/export/' + uuid" target="_blank"><el-button type="success" size="small" icon="el-icon-document">Export</el-button></a>
+    <el-table
+      :data="
+        tableData.filter(
+          (data) =>
+            !search ||
+            data.name.toLowerCase().includes(search.toLowerCase()) ||
+            data.major.toLowerCase().includes(search.toLowerCase()) ||
+            data.sec.toLowerCase().includes(search.toLowerCase()) ||
+            data.start_time.toLowerCase().includes(search.toLowerCase()) ||
+            data.end_time.toLowerCase().includes(search.toLowerCase()) ||
+            data.sid_time.toLowerCase().includes(search.toLowerCase())
+        )
+      "
+      style="width: 100%"
+    >
+      <el-table-column label="ลำดับ" prop="order"> </el-table-column>
+      <el-table-column label="ชื่อนักศึกษา" prop="name"> </el-table-column>
+      <el-table-column label="สาขา" prop="major"> </el-table-column>
+      <el-table-column label="กลุ่มเรียน" prop="sec"> </el-table-column>
+      <el-table-column label="รหัสนักศึกษา" prop="sid"> </el-table-column>
+      <el-table-column label="วันที่เข้าร่วม" prop="date"> </el-table-column>
+      <el-table-column label="เวลาเริ่มต้น" prop="start_time">
+      </el-table-column>
+      <el-table-column label="เวลาสิ้นสุด" prop="end_time"> </el-table-column>
+      <el-table-column align="right">
+        <template slot="header">
+          <el-input v-model="search" size="mini" placeholder="Type to search" />
+        </template>
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.end_time === '-' ? 'primary' : 'success'"
+            disable-transitions
+            >{{
+              scope.row.end_time === '-' ? 'อยู่ในระบบ' : 'ลงชื่อออกแล้ว'
+            }}</el-tag
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
     <br />
   </div>
 </template>
@@ -37,6 +83,9 @@ export default {
       name: '...',
       str_time: '...',
       description: '...',
+      tableData: [],
+      search: '',
+      helper: helper
     }
   },
   methods: {
@@ -50,8 +99,42 @@ export default {
         })
         .then((res) => {
           this.name = res.data.content.name
-          this.str_time = `${new Date(res.data.content.time.start).toLocaleString()} ถึง ${new Date(res.data.content.time.start).toLocaleString()}`
+          this.str_time = `${new Date(
+            res.data.content.time.start
+          ).toLocaleString()} ถึง ${new Date(
+            res.data.content.time.start
+          ).toLocaleString()}`
           this.description = res.data.content.description
+          this.tableData = []
+          for (const p of res.data.content.participants) {
+            this.tableData.push({
+              order: this.tableData.length + 1,
+              date:
+                new Date(p.timeJoin).getDate() +
+                '/' +
+                (new Date(p.timeJoin).getMonth() + 1) +
+                '/' +
+                new Date(p.timeJoin).getFullYear(),
+              name: p.owner.name,
+              major: p.owner.major,
+              sec: p.owner.sec,
+              sid: p.owner.student_id,
+              start_time:
+                new Date(p.timeJoin).getHours() +
+                ':' +
+                new Date(p.timeJoin).getMinutes() +
+                ':' +
+                new Date(p.timeJoin).getSeconds(),
+              end_time:
+                new Date(p.timeLeave).getTime() < 1
+                  ? '-'
+                  : new Date(p.timeLeave).getHours() +
+                    ':' +
+                    new Date(p.timeLeave).getMinutes() +
+                    ':' +
+                    new Date(p.timeLeave).getSeconds(),
+            })
+          }
           this.loading = false
         })
         .catch((e) => {
@@ -68,6 +151,9 @@ export default {
     if (!this.$cookies.get('auth')) {
       this.$router.push('/login')
     }
+    setInterval(() => {
+      this.loadEventInfo()
+    }, 3000)
     this.loadEventInfo()
     console.log(this.uuid)
   },
