@@ -92,7 +92,7 @@ export default {
     loadEventInfo() {
       this.loading = true
       this.$axios
-        .get(`${helper.ENDPOINT_URL}/event/info/${this.uuid}`, {
+        .get(`${helper.ENDPOINT_URL}/event/info/${this.uuid}?inclide=true`, {
           headers: {
             Authorization: 'Bearer ' + this.$cookies.get('auth'),
           },
