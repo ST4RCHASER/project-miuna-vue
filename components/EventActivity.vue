@@ -11,7 +11,7 @@
     >
     <h1>รายชื่อกิจกรรมที่สร้าง</h1>
     <el-drawer
-      :title="(editor.mode == 'create' ? 'สร้างกิจกรรมใหม่' : 'แก้ไขกิจกรรม')"
+      :title="editor.mode == 'create' ? 'สร้างกิจกรรมใหม่' : 'แก้ไขกิจกรรม'"
       :visible.sync="editor.show"
       size="40%"
     >
@@ -32,6 +32,7 @@
             <br />
             <el-date-picker
               v-model="editor.form.str_time"
+              :picker-options="pickerOptions"
               type="datetimerange"
               range-separator="ถึง"
               start-placeholder="วันที่เริ่มกิจกรรม"
@@ -120,6 +121,11 @@ export default {
         mode: 'create',
         genernal_error: false,
       },
+      pickerOptions: {
+        disabledDate(time) {
+          return new Date().setDate(new Date().getDate() - 1) > time.getTime()
+        },
+      },
       loading: true,
       tableData: [],
     }
@@ -134,8 +140,8 @@ export default {
     this.loadOwnEventList()
   },
   methods: {
-    viewInfomation(uuid){
-      this.$router.push('/event/'+uuid)
+    viewInfomation(uuid) {
+      this.$router.push('/event/' + uuid)
     },
     deleteEvent(uuid) {
       const h = this.$createElement
@@ -198,7 +204,7 @@ export default {
           description: data.description,
           str_time: [new Date(data.time.start), data.time.end],
         }
-        console.log(this.editor.form,data)
+        console.log(this.editor.form, data)
         this.editor.show = true
       }
     },
@@ -213,14 +219,40 @@ export default {
         .then((response) => {
           this.loading = false
           this.tableData = []
-          this.rawTableData = response.data.content;
+          this.rawTableData = response.data.content
           for (const data of response.data.content) {
             this.tableData.push({
               id: data.id,
               name: data.name,
               time: {
-                start_txt: new Date(data.time.start).toLocaleString(),
-                end_txt: new Date(data.time.end).toLocaleString(),
+                start_txt:
+                  new Date(data.time.start).getDate() +
+                  '/' +
+                  (new Date(data.time.start).getMonth() + 1) +
+                  '/' +
+                  (new Date(data.time.start).getFullYear() + 543) +
+                  ', ' +
+                  (new Date(data.time.start).getHours() > 9
+                    ? new Date(data.time.start).getHours()
+                    : '0' + new Date(data.time.start).getHours()) +
+                  ':' +
+                  (new Date(data.time.start).getMinutes() > 9
+                    ? new Date(data.time.start).getMinutes()
+                    : '0' + new Date(data.time.start).getMinutes()),
+                end_txt:
+                  new Date(data.time.end).getDate() +
+                  '/' +
+                  (new Date(data.time.end).getMonth() + 1) +
+                  '/' +
+                  (new Date(data.time.end).getFullYear() + 543) +
+                  ', ' +
+                  (new Date(data.time.end).getHours() > 9
+                    ? new Date(data.time.end).getHours()
+                    : '0' + new Date(data.time.end).getHours()) +
+                  ':' +
+                  (new Date(data.time.end).getMinutes() > 9
+                    ? new Date(data.time.end).getMinutes()
+                    : '0' + new Date(data.time.end).getMinutes()),
               },
             })
           }
@@ -262,7 +294,7 @@ export default {
               type: 'error',
             })
           })
-      }else {
+      } else {
         if (
           !this.editor.form.str_time ||
           !this.editor.form.name ||
@@ -278,11 +310,15 @@ export default {
         }
         console.log(this.editor)
         this.$axios
-          .put(helper.ENDPOINT_URL + '/event/edit/' + this.editor.form.id , this.editor.form, {
-            headers: {
-              Authorization: 'Bearer ' + this.$cookies.get('auth'),
-            },
-          })
+          .put(
+            helper.ENDPOINT_URL + '/event/edit/' + this.editor.form.id,
+            this.editor.form,
+            {
+              headers: {
+                Authorization: 'Bearer ' + this.$cookies.get('auth'),
+              },
+            }
+          )
           .then((response) => {
             this.editor.show = false
             this.$message({

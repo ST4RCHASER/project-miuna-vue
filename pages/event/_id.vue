@@ -23,7 +23,12 @@
       <b>คำอธิบาย/หมายเหตุ:</b> {{ description }}
     </el-card>
     <!-- {{ uuid }} -->
-    <h3>ผู้เข้าร่วม:</h3> <a :href="helper.ENDPOINT_URL+ '/event/export/' + uuid" target="_blank"><el-button type="success" size="small" icon="el-icon-document">Export</el-button></a>
+    <h3>ผู้เข้าร่วม:</h3>
+    <a :href="helper.ENDPOINT_URL + '/event/export/' + uuid" target="_blank"
+      ><el-button type="success" size="small" icon="el-icon-document"
+        >Export</el-button
+      ></a
+    >
     <el-table
       :data="
         tableData.filter(
@@ -85,7 +90,7 @@ export default {
       description: '...',
       tableData: [],
       search: '',
-      helper: helper
+      helper: helper,
     }
   },
   methods: {
@@ -99,11 +104,27 @@ export default {
         })
         .then((res) => {
           this.name = res.data.content.name
-          this.str_time = `${new Date(
-            res.data.content.time.start
-          ).toLocaleString()} ถึง ${new Date(
-            res.data.content.time.start
-          ).toLocaleString()}`
+          this.str_time = `${
+            new Date(res.data.content.time.start).getDate() +
+            '/' +
+            (new Date(res.data.content.time.start).getMonth() + 1) +
+            '/' +
+            (new Date(res.data.content.time.start).getFullYear() + 543) +
+            ', ' +
+            (new Date(res.data.content.time.start).getHours() > 9 ?  new Date(res.data.content.time.start).getHours() : '0' +  new Date(res.data.content.time.start).getHours()) +
+            ':' +
+            (new Date(res.data.content.time.start).getMinutes() > 9 ? new Date(res.data.content.time.start).getMinutes() : '0'+  new Date(res.data.content.time.start).getMinutes())
+          } ถึง ${
+            new Date(res.data.content.time.end).getDate() +
+            '/' +
+            (new Date(res.data.content.time.end).getMonth() + 1) +
+            '/' +
+            (new Date(res.data.content.time.end).getFullYear() + 543) +
+            ', ' +
+            (new Date(res.data.content.time.end).getHours() > 9 ? new Date(res.data.content.time.end).getHours() : '0' + new Date(res.data.content.time.end).getHours() )+
+            ':' +
+            (new Date(res.data.content.time.end).getMinutes() > 9 ? new Date(res.data.content.time.end).getMinutes() : '0' + new Date(res.data.content.time.end).getMinutes())
+          }`
           this.description = res.data.content.description
           this.tableData = []
           for (const p of res.data.content.participants) {
@@ -114,7 +135,7 @@ export default {
                 '/' +
                 (new Date(p.timeJoin).getMonth() + 1) +
                 '/' +
-                new Date(p.timeJoin).getFullYear(),
+                (new Date(p.timeJoin).getFullYear() + 543),
               name: p.owner.name,
               major: p.owner.major,
               sec: p.owner.sec,
@@ -138,11 +159,14 @@ export default {
           this.loading = false
         })
         .catch((e) => {
-          if (e.response.status == 401) {
-            this.$router.push('/login')
-          }
-          if (e.response.status == 404 || e.response.status == 500) {
-            this.$router.push('/events')
+          console.log(e)
+          if (e.response) {
+            if (e.response.status == 401) {
+              this.$router.push('/login')
+            }
+            if (e.response.status == 404 || e.response.status == 500) {
+              this.$router.push('/events')
+            }
           }
         })
     },
