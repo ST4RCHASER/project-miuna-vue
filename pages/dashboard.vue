@@ -105,4 +105,7 @@ export default {
 </script>
 
 <style>
+body {
+  background: white !important;
+}
 </style>
