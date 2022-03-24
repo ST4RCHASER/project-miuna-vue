@@ -7,7 +7,7 @@
       <div>
         <div class="tcenter">
           <img
-            :src="`https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${uuid}`"
+            :src="`https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${qrData}`"
           />
         </div>
       </div>
@@ -80,7 +80,9 @@
 
 <script>
 import { Helper } from '../../utils/Helper'
+import totp from 'totp-generator';
 let helper = new Helper()
+import base32 from 'base32';
 export default {
   data() {
     return {
@@ -91,6 +93,8 @@ export default {
       tableData: [],
       search: '',
       helper: helper,
+      rawData: {},
+      qrData: 'none',
     }
   },
   methods: {
@@ -103,31 +107,64 @@ export default {
           },
         })
         .then((res) => {
-          this.name = res.data.content.name
+          this.rawData = res.data.content
+          switch (this.rawData.qrType) {
+            case 0:
+              this.qrData = atob(JSON.stringify({
+                type: 'event',
+                id: this.rawData.uuid,
+              })).toString()
+              break
+            case 1:
+              let base = JSON.stringify({
+                type: 'event',
+                id: this.rawData.uuid,
+                totp: totp(base32.encode(`${this.rawData.uuid}${this.rawData.ownerID}${this.rawData.uuid}${this.rawData.ownerID}`)),
+              });
+              console.log('base',base)
+              this.qrData = atob(base).toString()
+              break
+            case 2:
+              this.qrData = atob(JSON.stringify({
+                type: 'event',
+                id: this.rawData.uuid,
+                hash: this.rawData.oneTimeHash,
+              })).toString()
+              break
+          }
+          this.name = this.rawData.name
           this.str_time = `${
-            new Date(res.data.content.time.start).getDate() +
+            new Date(this.rawData.time.start).getDate() +
             '/' +
-            (new Date(res.data.content.time.start).getMonth() + 1) +
+            (new Date(this.rawData.time.start).getMonth() + 1) +
             '/' +
-            (new Date(res.data.content.time.start).getFullYear() + 543) +
+            (new Date(this.rawData.time.start).getFullYear() + 543) +
             ', ' +
-            (new Date(res.data.content.time.start).getHours() > 9 ?  new Date(res.data.content.time.start).getHours() : '0' +  new Date(res.data.content.time.start).getHours()) +
+            (new Date(this.rawData.time.start).getHours() > 9
+              ? new Date(this.rawData.time.start).getHours()
+              : '0' + new Date(this.rawData.time.start).getHours()) +
             ':' +
-            (new Date(res.data.content.time.start).getMinutes() > 9 ? new Date(res.data.content.time.start).getMinutes() : '0'+  new Date(res.data.content.time.start).getMinutes())
+            (new Date(this.rawData.time.start).getMinutes() > 9
+              ? new Date(this.rawData.time.start).getMinutes()
+              : '0' + new Date(this.rawData.time.start).getMinutes())
           } ถึง ${
-            new Date(res.data.content.time.end).getDate() +
+            new Date(this.rawData.time.end).getDate() +
             '/' +
-            (new Date(res.data.content.time.end).getMonth() + 1) +
+            (new Date(this.rawData.time.end).getMonth() + 1) +
             '/' +
-            (new Date(res.data.content.time.end).getFullYear() + 543) +
+            (new Date(this.rawData.time.end).getFullYear() + 543) +
             ', ' +
-            (new Date(res.data.content.time.end).getHours() > 9 ? new Date(res.data.content.time.end).getHours() : '0' + new Date(res.data.content.time.end).getHours() )+
+            (new Date(this.rawData.time.end).getHours() > 9
+              ? new Date(this.rawData.time.end).getHours()
+              : '0' + new Date(this.rawData.time.end).getHours()) +
             ':' +
-            (new Date(res.data.content.time.end).getMinutes() > 9 ? new Date(res.data.content.time.end).getMinutes() : '0' + new Date(res.data.content.time.end).getMinutes())
+            (new Date(this.rawData.time.end).getMinutes() > 9
+              ? new Date(this.rawData.time.end).getMinutes()
+              : '0' + new Date(this.rawData.time.end).getMinutes())
           }`
-          this.description = res.data.content.description
+          this.description = this.rawData.description
           this.tableData = []
-          for (const p of res.data.content.participants) {
+          for (const p of this.rawData.participants) {
             this.tableData.push({
               order: this.tableData.length + 1,
               date:

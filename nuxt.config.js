@@ -52,9 +52,13 @@ export default {
       lang: 'en',
     },
   },
-
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     transpile: [/^element-ui/],
+    extend(config, {}) {
+      config.node = {
+          fs: 'empty'
+      }
+  }
   },
 }

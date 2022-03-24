@@ -6,6 +6,7 @@
       @click="
         editor.show = true
         editor.mode = 'create'
+        editor.form = {}
       "
       >สร้างกิจกรรมใหม่</el-button
     >
@@ -39,6 +40,16 @@
               end-placeholder="วันที่สิ้นสุดกิจกรรม"
             >
             </el-date-picker>
+          </el-form-item>
+          <el-form-item label="รูปแบบ QRCode*">
+            <br />
+            <div style="margin-top: 20px">
+              <el-radio-group v-model="editor.form.qrType" size="small">
+                <el-radio-button label="0">คงที่</el-radio-button>
+                <el-radio-button label="1">จำกัดเวลา</el-radio-button>
+                <el-radio-button label="2">ครั้งเดียว</el-radio-button>
+              </el-radio-group>
+            </div>
           </el-form-item>
           <el-form-item label="คำอธิบาย/หมายเหตุ">
             <el-input
@@ -120,6 +131,7 @@ export default {
         form: {},
         mode: 'create',
         genernal_error: false,
+        qrType: 0,
       },
       pickerOptions: {
         disabledDate(time) {
@@ -202,6 +214,7 @@ export default {
           id: data.id,
           name: data.name,
           description: data.description,
+          qrType: data.qrType,
           str_time: [new Date(data.time.start), data.time.end],
         }
         console.log(this.editor.form, data)
