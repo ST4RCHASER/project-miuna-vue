@@ -8,7 +8,7 @@
     text-color="#fff"
     active-text-color="#ffd04b"
   >
-    <el-menu-item index="0" @click="activeIndex = 0; push('/dashboard')" style="font-size: 20px;"><img class="logo" src="/logo_1.png" />SCI Event</el-menu-item>
+    <el-menu-item index="0" @click="activeIndex = 0; push('/dashboard')" style="font-size: 20px;">Ma-Kub</el-menu-item>
     <el-menu-item index="2" @click="activeIndex = 0; push('/dashboard')"><i class="nav-icon el-icon-time"></i>History</el-menu-item>
     <el-menu-item index="1" @click="activeIndex = 1; push('/events')"><i class="nav-icon el-icon-s-order"></i>Events</el-menu-item>
     <el-submenu style="float: right;" index="2-4">

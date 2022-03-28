@@ -3,13 +3,26 @@
     <h1>รายละเอียดกิจกรรม</h1>
     <br />
     <h3>QRCode:</h3>
-    <el-card class="box-card">
+    <el-card v-if="qrData != 'none'" class="box-card">
       <div>
         <div class="tcenter">
           <img
             :src="`https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${qrData}`"
           />
         </div>
+      </div>
+      <div v-if="rawData.qrType == 1">
+        <br />
+        <center>{{ countingDown }}</center>
+        <el-progress
+          :text-inside="true"
+          :percentage="Number((this.countingDown / 30) * 100)"
+          :format="
+            () => {
+              return ``
+            }
+          "
+        ></el-progress>
       </div>
     </el-card>
     <h3>ข้อมูล:</h3>
@@ -19,6 +32,15 @@
       <b>ชื่อกิจกรรม:</b> {{ name }}
       <br />
       <b>ระยะเวลากิจกรรม:</b> {{ str_time }}
+      <br />
+      <b>รูปแบบ QRCode:</b>
+      {{
+        rawData.qrType == 0
+          ? 'คงที่'
+          : rawData.qrType == 1
+          ? 'จำกัดเวลา'
+          : 'ครั้งเดียว'
+      }}
       <br />
       <b>คำอธิบาย/หมายเหตุ:</b> {{ description }}
     </el-card>
@@ -80,9 +102,9 @@
 
 <script>
 import { Helper } from '../../utils/Helper'
-import totp from 'totp-generator';
+import totp from 'totp-generator'
 let helper = new Helper()
-import base32 from 'base32';
+import base32 from 'base32'
 export default {
   data() {
     return {
@@ -95,13 +117,21 @@ export default {
       helper: helper,
       rawData: {},
       qrData: 'none',
+      countingDown: 30,
     }
   },
   methods: {
     loadEventInfo() {
+      let currentTime = new Date()
+      //Countdown 30 seconds to second 30 and 60 of current_time
+      if (currentTime.getSeconds() < 30) {
+        this.countingDown = 30 - currentTime.getSeconds()
+      } else {
+        this.countingDown = 60 - currentTime.getSeconds()
+      }
       this.loading = true
       this.$axios
-        .get(`${helper.ENDPOINT_URL}/event/info/${this.uuid}?inclide=true`, {
+        .get(`${helper.ENDPOINT_URL}/event/info/${this.uuid}?change=false`, {
           headers: {
             Authorization: 'Bearer ' + this.$cookies.get('auth'),
           },
@@ -110,26 +140,31 @@ export default {
           this.rawData = res.data.content
           switch (this.rawData.qrType) {
             case 0:
-              this.qrData = atob(JSON.stringify({
-                type: 'event',
-                id: this.rawData.uuid,
-              })).toString()
+              this.qrData = btoa(
+                JSON.stringify({
+                  type: 0,
+                  id: this.rawData.id,
+                })
+              ).toString()
               break
             case 1:
               let base = JSON.stringify({
-                type: 'event',
-                id: this.rawData.uuid,
-                totp: totp(base32.encode(`${this.rawData.uuid}${this.rawData.ownerID}${this.rawData.uuid}${this.rawData.ownerID}`)),
-              });
-              console.log('base',base)
-              this.qrData = atob(base).toString()
+                type: 1,
+                id: this.rawData.id,
+                hash: this.rawData.hash,
+                totp: totp(this.rawData.hash),
+              })
+              console.log('base', base)
+              this.qrData = btoa(base).toString()
               break
             case 2:
-              this.qrData = atob(JSON.stringify({
-                type: 'event',
-                id: this.rawData.uuid,
-                hash: this.rawData.oneTimeHash,
-              })).toString()
+              this.qrData = btoa(
+                JSON.stringify({
+                  type: 2,
+                  id: this.rawData.id,
+                  hash: this.rawData.oneTimeHash,
+                })
+              ).toString()
               break
           }
           this.name = this.rawData.name
@@ -198,7 +233,7 @@ export default {
         .catch((e) => {
           console.log(e)
           if (e.response) {
-            if (e.response.status == 401) {
+            if (e.response.status == 401 || e.response.status == 403) {
               this.$router.push('/login')
             }
             if (e.response.status == 404 || e.response.status == 500) {
@@ -214,7 +249,7 @@ export default {
     }
     setInterval(() => {
       this.loadEventInfo()
-    }, 3000)
+    }, 1000)
     this.loadEventInfo()
     console.log(this.uuid)
   },
@@ -234,4 +269,7 @@ h3 {
 .tcenter {
   text-align: center;
 }
+.nuxt-progress {
+  display: none !important;
+} 
 </style>
