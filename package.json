@@ -23,8 +23,10 @@
     "totp-generator": "^0.0.13",
     "vue": "^2.6.14",
     "vue-cookies": "^1.7.4",
+    "vue-places": "^2.2.2",
     "vue-server-renderer": "^2.6.14",
     "vue-template-compiler": "^2.6.14",
+    "vue2-location-picker": "^1.2.0",
     "webpack": "^4.46.0"
   },
   "devDependencies": {

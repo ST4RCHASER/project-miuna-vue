@@ -57,7 +57,20 @@
               v-model="editor.form.description"
             ></el-input>
           </el-form-item>
+          <el-form-item label="">
+            <el-checkbox
+              v-model="editor.form.loc_check"
+              label="ตรวจสอบสถานที่"
+            ></el-checkbox>
+          </el-form-item>
+          <location-picker
+            v-if="editor.form.loc_check"
+            v-model="map.location"
+            :options="map.options"
+          >
+          </location-picker>
           <el-form-item>
+            <br />
             <el-button :loading="loading" type="primary" @click="saveEditor()"
               >บันทึก</el-button
             >
@@ -119,13 +132,32 @@
 </template>
 
 <script>
+import { LocationPicker } from 'vue2-location-picker'
 import { Helper } from '../utils/Helper'
 import NavBar from './NavBar.vue'
 let helper = new Helper()
 export default {
-  components: { NavBar },
+  components: { NavBar, LocationPicker },
   data() {
     return {
+      map: {
+        location: {
+          lat: 41.0082376,
+          lng: 28.97835889999999,
+        },
+        options: {
+          // is not required
+          map: {
+            /** other map options **/
+          },
+          marker: {
+            /** marker options **/
+          },
+          autocomplete: {
+            /** autocomplete options **/
+          },
+        },
+      },
       editor: {
         show: false,
         form: {},
@@ -143,6 +175,12 @@ export default {
     }
   },
   mounted() {
+    let script = document.createElement('script')
+    script.setAttribute(
+      'src',
+      'https://maps.googleapis.com/maps/api/js?key=AIzaSyDJI1raME2rtnpoSLWqP_WppRTSv34gPAU&libraries=places'
+    )
+    document.head.appendChild(script)
     this.editor.form = {
       name: '',
       description: '',
@@ -215,7 +253,10 @@ export default {
           name: data.name,
           description: data.description,
           qrType: data.qrType,
-          str_time: [new Date(data.time.start), data.time.end],
+          str_time: [data.time.start, data.time.end],
+          loc_check: data.loc_check,
+          loc_lat: data.loc_lat,
+          loc_lng: data.loc_lng,
         }
         console.log(this.editor.form, data)
         this.editor.show = true
@@ -272,6 +313,8 @@ export default {
         })
     },
     saveEditor() {
+      this.editor.form.loc_lat = this.map.location.lat
+      this.editor.form.loc_lng = this.map.location.lng
       if (this.editor.mode == 'create') {
         if (
           !this.editor.form.str_time ||
@@ -283,10 +326,21 @@ export default {
           return
         }
         this.editor.form.time = {
-          start: this.editor.form.str_time[0],
-          end: this.editor.form.str_time[1],
+          start: 0,
+          end: 0,
         }
-        console.log(this.editor)
+        try {
+          this.editor.form.time.start = new Date(this.editor.form.str_time[0]).getTime();
+        } catch (e) {
+          console.log('time ee', e)
+          this.editor.form.time.start = this.editor.form.str_time[0]
+        }
+        try {
+          this.editor.form.time.end = new Date(this.editor.form.str_time[1]).getTime();
+        } catch (e) {
+          console.log('time ee', 2)
+          this.editor.form.time.end = this.editor.form.str_time[1]
+        }
         this.$axios
           .post(helper.ENDPOINT_URL + '/event/create', this.editor.form, {
             headers: {
@@ -318,8 +372,20 @@ export default {
           return
         }
         this.editor.form.time = {
-          start: this.editor.form.str_time[0],
-          end: this.editor.form.str_time[1],
+          start: 0,
+          end: 0,
+        }
+        try {
+          this.editor.form.time.start = new Date(this.editor.form.str_time[0]).getTime();
+        } catch (e) {
+          console.log('time ee', e)
+          this.editor.form.time.start = this.editor.form.str_time[0]
+        }
+        try {
+          this.editor.form.time.end = new Date(this.editor.form.str_time[1]).getTime();
+        } catch (e) {
+          console.log('time ee', 2)
+          this.editor.form.time.end = this.editor.form.str_time[1]
         }
         console.log(this.editor)
         this.$axios
