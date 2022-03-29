@@ -52,6 +52,9 @@ export default {
       lang: 'en',
     },
   },
+  server: {
+    host: '0.0.0.0' // default: localhost
+  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     transpile: [/^element-ui/],
