@@ -213,19 +213,31 @@ export default {
               sec: p.owner.sec,
               sid: p.owner.student_id,
               start_time:
-                new Date(p.timeJoin).getHours() +
+                (new Date(p.timeJoin).getHours() > 9
+                  ? new Date(p.timeJoin).getHours()
+                  : `0${new Date(p.timeJoin).getHours()}`) +
                 ':' +
-                new Date(p.timeJoin).getMinutes() +
+                (new Date(p.timeJoin).getMinutes() > 9
+                  ? new Date(p.timeJoin).getMinutes()
+                  : `0${new Date(p.timeJoin).getMinutes()}`) +
                 ':' +
-                new Date(p.timeJoin).getSeconds(),
+                (new Date(p.timeJoin).getSeconds() > 9
+                  ? new Date(p.timeJoin).getSeconds()
+                  : `0${new Date(p.timeJoin).getSeconds()}`),
               end_time:
                 new Date(p.timeLeave).getTime() < 1
                   ? '-'
-                  : new Date(p.timeLeave).getHours() +
+                  : (new Date(p.timeLeave).getHours() > 9
+                      ? new Date(p.timeLeave).getHours()
+                      : `0${new Date(p.timeLeave).getHours()}`) +
                     ':' +
-                    new Date(p.timeLeave).getMinutes() +
+                    (new Date(p.timeLeave).getMinutes() > 9
+                      ? new Date(p.timeLeave).getMinutes()
+                      : `0${new Date(p.timeLeave).getMinutes()}`) +
                     ':' +
-                    new Date(p.timeLeave).getSeconds(),
+                    (new Date(p.timeLeave).getSeconds() > 9
+                      ? new Date(p.timeLeave).getSeconds()
+                      : `0${new Date(p.timeLeave).getSeconds()}`),
             })
           }
           this.loading = false
@@ -271,5 +283,5 @@ h3 {
 }
 .nuxt-progress {
   display: none !important;
-} 
+}
 </style>

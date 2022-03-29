@@ -79,19 +79,17 @@ export default {
                 '/' +
                 (new Date(data.timeJoin).getFullYear() + 543),
               start_time:
-                new Date(data.timeJoin).getHours() +
+                (new Date(data.timeJoin).getHours() > 9 ? new Date(data.timeJoin).getHours() : `0${new Date(data.timeJoin).getHours()}`) +
                 ':' +
-                new Date(data.timeJoin).getMinutes() +
+                (new Date(data.timeJoin).getMinutes() > 9 ? new Date(data.timeJoin).getMinutes() : `0${new Date(data.timeJoin).getMinutes()}`) +
                 ':' +
-                new Date(data.timeJoin).getSeconds(),
+                (new Date(data.timeJoin).getSeconds() > 9 ? new Date(data.timeJoin).getSeconds() : `0${new Date(data.timeJoin).getSeconds()}`),
               end_time:
-                new Date(data.timeLeave).getTime() < 1
-                  ? '-'
-                  : new Date(data.timeLeave).getHours() +
-                    ':' +
-                    new Date(data.timeLeave).getMinutes() +
-                    ':' +
-                    new Date(data.timeLeave).getSeconds(),
+                              (new Date(data.timeLeave).getHours() > 9 ? new Date(data.timeLeave).getHours() : `0${new Date(data.timeLeave).getHours()}`) +
+                ':' +
+                (new Date(data.timeLeave).getMinutes() > 9 ? new Date(data.timeLeave).getMinutes() : `0${new Date(data.timeLeave).getMinutes()}`) +
+                ':' +
+                (new Date(data.timeLeave).getSeconds() > 9 ? new Date(data.timeLeave).getSeconds() : `0${new Date(data.timeLeave).getSeconds()}`),
             })
           }
         })
