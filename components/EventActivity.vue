@@ -258,6 +258,8 @@ export default {
           loc_lat: data.loc_lat,
           loc_lng: data.loc_lng,
         }
+        this.map.location.lat = data.loc_lat;
+        this.map.location.lng = data.loc_lng;
         console.log(this.editor.form, data)
         this.editor.show = true
       }
