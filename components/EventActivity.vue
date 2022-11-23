@@ -178,7 +178,7 @@ export default {
     let script = document.createElement('script')
     script.setAttribute(
       'src',
-      'https://maps.googleapis.com/maps/api/js?key=AIzaSyDJI1raME2rtnpoSLWqP_WppRTSv34gPAU&libraries=places'
+      'https://maps.googleapis.com/maps/api/js?key=AIzaSyC68ILDoj2NGRcexF3oFnUH2qnzfjfj35E&libraries=places'
     )
     document.head.appendChild(script)
     this.editor.form = {
@@ -258,8 +258,8 @@ export default {
           loc_lat: data.loc_lat,
           loc_lng: data.loc_lng,
         }
-        this.map.location.lat = data.loc_lat;
-        this.map.location.lng = data.loc_lng;
+        this.map.location.lat = data.loc_lat
+        this.map.location.lng = data.loc_lng
         console.log(this.editor.form, data)
         this.editor.show = true
       }
@@ -332,13 +332,17 @@ export default {
           end: 0,
         }
         try {
-          this.editor.form.time.start = new Date(this.editor.form.str_time[0]).getTime();
+          this.editor.form.time.start = new Date(
+            this.editor.form.str_time[0]
+          ).getTime()
         } catch (e) {
           console.log('time ee', e)
           this.editor.form.time.start = this.editor.form.str_time[0]
         }
         try {
-          this.editor.form.time.end = new Date(this.editor.form.str_time[1]).getTime();
+          this.editor.form.time.end = new Date(
+            this.editor.form.str_time[1]
+          ).getTime()
         } catch (e) {
           console.log('time ee', 2)
           this.editor.form.time.end = this.editor.form.str_time[1]
@@ -378,13 +382,17 @@ export default {
           end: 0,
         }
         try {
-          this.editor.form.time.start = new Date(this.editor.form.str_time[0]).getTime();
+          this.editor.form.time.start = new Date(
+            this.editor.form.str_time[0]
+          ).getTime()
         } catch (e) {
           console.log('time ee', e)
           this.editor.form.time.start = this.editor.form.str_time[0]
         }
         try {
-          this.editor.form.time.end = new Date(this.editor.form.str_time[1]).getTime();
+          this.editor.form.time.end = new Date(
+            this.editor.form.str_time[1]
+          ).getTime()
         } catch (e) {
           console.log('time ee', 2)
           this.editor.form.time.end = this.editor.form.str_time[1]
